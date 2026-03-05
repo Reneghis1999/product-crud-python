@@ -1,48 +1,46 @@
 # product_manager.py
 from product import Product
+from database import SessionLocal, Base, engine
+
+# Créer la table dans SQLite si elle n'existe pas
+Base.metadata.create_all(bind=engine)
 
 class ProductManager:
     def __init__(self):
-        # La liste qui contiendra tous nos produits
-        self.products = []
+        self.session = SessionLocal()  # La session pour interagir avec la base
 
-    def add_product(self, product: Product):
-        self.products.append(product)
-        print(f"Produit ajouté : {product.name} (ID {product.product_id})")
+    def add_product(self, id, name, price, quantity):
+        product = Product(id=id, name=name, price=price, quantity=quantity)
+        self.session.add(product)
+        self.session.commit()
+        print(f"Produit ajouté : {product}")
 
-    def get_product(self, product_id: int):
-        # Chercher un produit par son ID
-        for product in self.products:
-            if product.product_id == product_id:
-                return product
-        
-        print(f"Aucun produit trouvé avec l'ID {product_id}")
-        return None
+    def get_product(self, id):
+        return self.session.query(Product).filter(Product.id == id).first()
 
-    def update_product(self, product_id: int, name=None, price=None, quantity=None):
-        product = self.get_product(product_id)
-        if product:
-            if name is not None:
-                product.name = name
-            if price is not None:
-                product.price = price
-            if quantity is not None:
-                product.quantity = quantity
-            print(f"Produit mis à jour : {product}")
-        else:
-            print(f"Impossible de mettre à jour : produit {product_id} introuvable")
+    def update_product(self, id, name=None, price=None, quantity=None):
+        product = self.get_product(id)
+        if not product:
+            print("Produit non trouvé")
+            return
+        if name: product.name = name
+        if price: product.price = price
+        if quantity: product.quantity = quantity
+        self.session.commit()
+        print(f"Produit mis à jour : {product}")
 
-    def delete_product(self, product_id: int):
-        product = self.get_product(product_id)
-        if product:
-            self.products.remove(product)
-            print(f"Produit supprimé : {product}")
-        else:
-            print(f"Impossible de supprimer : produit {product_id} introuvable")
+    def delete_product(self, id):
+        product = self.get_product(id)
+        if not product:
+            print("Produit non trouvé")
+            return
+        self.session.delete(product)
+        self.session.commit()
+        print(f"Produit supprimé : {product}")
 
     def list_products(self):
-        # Affiche tous les produits
-        if not self.products:
+        products = self.session.query(Product).all()
+        if not products:
             print("Aucun produit dans le stock")
-        for product in self.products:
-            print(product)
+        for p in products:
+            print(p)

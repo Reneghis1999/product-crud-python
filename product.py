@@ -1,18 +1,18 @@
-class Product:
-    """
-    Represents a product entity.
-    """
+# product.py
+from sqlalchemy import Column, Integer, String, Float
+from database import Base
 
-    def __init__(self, product_id: int, name: str, price: float, quantity: int):
-        self.product_id = product_id
-        self.name = name
-        self.price = price
-        self.quantity = quantity
+class Product(Base):
+    """
+    Represents a product entity, stored in SQLite via SQLAlchemy ORM.
+    """
+    __tablename__ = "products"
 
-    def __str__(self):
-        return (
-            f"ID: {self.product_id} | "
-            f"Name: {self.name} | "
-            f"Price: {self.price} | "
-            f"Quantity: {self.quantity}"
-        )
+    # Colonnes
+    id = Column(Integer, primary_key=True, index=True)   # ID du produit
+    name = Column(String, nullable=False)               # Nom
+    price = Column(Float, nullable=False)              # Prix
+    quantity = Column(Integer, nullable=False)         # Quantité
+
+    def __repr__(self):
+        return f"Product(id={self.id}, name='{self.name}', price={self.price}, quantity={self.quantity})"
