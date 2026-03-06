@@ -6,41 +6,59 @@ from database import SessionLocal, Base, engine
 Base.metadata.create_all(bind=engine)
 
 class ProductManager:
-    def __init__(self):
-        self.session = SessionLocal()  # La session pour interagir avec la base
-
     def add_product(self, id, name, price, quantity):
-        product = Product(id=id, name=name, price=price, quantity=quantity)
-        self.session.add(product)
-        self.session.commit()
-        print(f"Produit ajouté : {product}")
+        try:
+            with SessionLocal() as session:
+                product = Product(id=id, name=name, price=price, quantity=quantity)
+                session.add(product)
+                session.commit()
+                print(f"Produit ajouté : {product}")
+        except Exception as e:
+            print(f"Erreur lors de l'ajout du produit : {e}")
 
     def get_product(self, id):
-        return self.session.query(Product).filter(Product.id == id).first()
+        try:
+            with SessionLocal() as session:
+                return session.query(Product).filter(Product.id == id).first()
+        except Exception as e:
+            print(f"Erreur lors de la récupération du produit : {e}")
+            return None
 
     def update_product(self, id, name=None, price=None, quantity=None):
-        product = self.get_product(id)
-        if not product:
-            print("Produit non trouvé")
-            return
-        if name: product.name = name
-        if price: product.price = price
-        if quantity: product.quantity = quantity
-        self.session.commit()
-        print(f"Produit mis à jour : {product}")
+        try:
+            with SessionLocal() as session:
+                product = session.query(Product).filter(Product.id == id).first()
+                if not product:
+                    print("Produit non trouvé")
+                    return
+                if name: product.name = name
+                if price: product.price = price
+                if quantity: product.quantity = quantity
+                session.commit()
+                print(f"Produit mis à jour : {product}")
+        except Exception as e:
+            print(f"Erreur lors de la mise à jour du produit : {e}")
 
     def delete_product(self, id):
-        product = self.get_product(id)
-        if not product:
-            print("Produit non trouvé")
-            return
-        self.session.delete(product)
-        self.session.commit()
-        print(f"Produit supprimé : {product}")
+        try:
+            with SessionLocal() as session:
+                product = session.query(Product).filter(Product.id == id).first()
+                if not product:
+                    print("Produit non trouvé")
+                    return
+                session.delete(product)
+                session.commit()
+                print(f"Produit supprimé : {product}")
+        except Exception as e:
+            print(f"Erreur lors de la suppression du produit : {e}")
 
     def list_products(self):
-        products = self.session.query(Product).all()
-        if not products:
-            print("Aucun produit dans le stock")
-        for p in products:
-            print(p)
+        try:
+            with SessionLocal() as session:
+                products = session.query(Product).all()
+                if not products:
+                    print("Aucun produit dans le stock")
+                for p in products:
+                    print(p)
+        except Exception as e:
+            print(f"Erreur lors de la récupération des produits : {e}")
