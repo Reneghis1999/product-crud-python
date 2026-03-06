@@ -73,6 +73,50 @@ git commit -m "003-add-ProductManager-class-with-CRUD" # classe product manager 
 git commit -m "004-add-main-cli-to-test-ProductManager" # création de main avec un menu
 git push
 
+--------------------------------------
+
+Évolution du projet : Persistance avec SQLite et SQLAlchemy
+
+Dans une seconde phase, le projet a été amélioré pour intégrer une base de données SQLite afin de rendre les données persistantes.
+
+Auparavant, les produits étaient stockés en mémoire  et disparaissaient à la fermeture du programme.
+Désormais, les produits sont enregistrés dans une base de données locale (products.db).
+
+ORM utilisé
+
+Le projet utilise SQLAlchemy comme ORM (Object Relational Mapping).
+
+Cela permet :
+
+De mapper la classe Product à une table en base de données
+
+D’effectuer les opérations CRUD via des objets Python
+
+De gérer les sessions et transactions proprement
+
+Nouvelle structure ajoutée
+
+database.py → Configuration de la connexion SQLite
+
+products.db → Base de données générée automatiquement
+
+Concepts supplémentaires abordés
+
+Persistance des données
+
+ORM (Object Relational Mapping)
+
+Gestion des sessions SQLAlchemy
+
+Liaison objet ↔ table relationnelle
+
+
+Commandes supplémentaires utilisées
+nouvelle btranche crée : feature/007-sqlalchemy-sqlite-crud
+python -m pip install sqlalchemy
+git commit -m "008-add-sqlite-database-configuration"
+
+
 Auteur
 
 NAYO René-Ghislain – Stagiaire développement backend Python / Développement POO
